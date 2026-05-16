@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-05-16
+
+### Fixed
+- Expanded chat tile in the WebFront previously rendered the default
+  variable list below the custom HTML. The state variables
+  (`InputPrompt`, `LastResponse`, `Busy`, `History`) are now flagged
+  hidden via `IPS_SetHidden` in `Create()` and re-asserted in
+  `ApplyChanges()`, so both the small and expanded views show only the
+  chat tile.
+
 ## [0.2.2] - 2026-05-16
 
 ### Fixed

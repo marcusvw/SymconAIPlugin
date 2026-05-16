@@ -9,7 +9,11 @@
       "Bash(git -C \"C:/Users/MarcusGrafvonWilamow/source/privateRepos/AISymconPlugin\" ls-tree -r HEAD --name-only)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(gh search *)",
+      "PowerShell(gh search code \"SetVisualizationType\" --owner=symcon --limit=10 2>&1)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }

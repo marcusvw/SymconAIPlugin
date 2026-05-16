@@ -40,7 +40,9 @@ class AISymconChat extends IPSModule
         $this->RegisterPropertyString('AuditVerbosity', 'normal');
         $this->RegisterPropertyString('AuditLogFile', '');
 
-        // Visible state variables.
+        // State variables — the chat tile renders these itself, so hide
+        // them from the WebFront detail view (otherwise the expanded
+        // tile shows the default variable list below the custom HTML).
         $this->RegisterVariableString('InputPrompt', $this->Translate('Prompt'), '', 10);
         $this->EnableAction('InputPrompt');
         $this->RegisterVariableString('LastResponse', $this->Translate('Last response'), '~TextBox', 20);
@@ -48,11 +50,22 @@ class AISymconChat extends IPSModule
         $this->RegisterVariableString('History', $this->Translate('History (JSON)'), '~TextBox', 40);
         SetValue($this->GetIDForIdent('History'), '[]');
         SetValue($this->GetIDForIdent('Busy'), false);
+
+        foreach (['InputPrompt', 'LastResponse', 'Busy', 'History'] as $ident) {
+            @IPS_SetHidden($this->GetIDForIdent($ident), true);
+        }
     }
 
     public function ApplyChanges()
     {
         parent::ApplyChanges();
+        // Re-assert hidden state in case Symcon recreated variables.
+        foreach (['InputPrompt', 'LastResponse', 'Busy', 'History'] as $ident) {
+            $vid = @$this->GetIDForIdent($ident);
+            if ($vid > 0) {
+                @IPS_SetHidden($vid, true);
+            }
+        }
     }
 
     public function RequestAction($Ident, $Value)
