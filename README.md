@@ -26,7 +26,7 @@ redaction).
 ## Quick start
 
 1. Install the module library via Module Control:
-   `https://github.com/wilamowitz/AISymconPlugin`
+   `https://github.com/marcusvw/SymconAIPlugin`
 2. Create an `AISymconAgent` instance.
 3. Pick a provider (LM Studio at `http://localhost:1234/v1` is the default).
 4. Pick a tool-calling-capable model. Recommended local minimums:

@@ -3,7 +3,7 @@
     "name": "AISymconAgent",
     "type": 0,
     "vendor": "wilamowitz",
-    "url": "https://github.com/wilamowitz/AISymconPlugin",
+    "url": "https://github.com/marcusvw/SymconAIPlugin",
     "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],

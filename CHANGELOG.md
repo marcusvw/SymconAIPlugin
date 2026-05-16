@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-16
+
+### Added
+- WebFront/Tile chat UI for `AISymconChat`: bubble layout, Enter-to-send,
+  Reset button, optional "show tool calls" trace toggle, animated busy
+  indicator, live updates via Symcon's `handleMessage` callback on the
+  `History` and `Busy` variables.
+- `GetVisualizationTile()` on `AISymconChat` renders `module.html` with
+  variable IDs and current state injected.
+
+### Changed
+- Repository URL updated to `https://github.com/marcusvw/SymconAIPlugin`
+  in `library.json`, `README.md` and both `module.json` manifests.
+
+## [0.1.0] - 2026-05-16
+
 ### Added
 - Initial scaffold: `AISymconChat` and `AISymconAgent` modules.
 - Provider-agnostic LLM layer with `LMStudioProvider` and `ClaudeProvider`.

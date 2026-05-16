@@ -3,7 +3,13 @@
     "allow": [
       "WebFetch(domain:www.symcon.de)",
       "Read(//c/Program Files/Symcon/**)",
-      "Read(//c/ProgramData/Symcon/**)"
+      "Read(//c/ProgramData/Symcon/**)",
+      "Bash(git -C \"C:/Users/MarcusGrafvonWilamow/source/privateRepos/AISymconPlugin\" log --oneline -10)",
+      "Bash(git -C \"C:/Users/MarcusGrafvonWilamow/source/privateRepos/AISymconPlugin\" remote -v)",
+      "Bash(git -C \"C:/Users/MarcusGrafvonWilamow/source/privateRepos/AISymconPlugin\" ls-tree -r HEAD --name-only)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
