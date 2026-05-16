@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-05-16
+
+### Reverted
+- 0.2.3 hid the chat state variables; this made the WebFront expanded
+  detail view empty. The expanded view is Symcon's default instance
+  variable list and is not replaceable via the HTML-SDK
+  (`GetVisualizationTile()` only feeds the tile itself). Variables are
+  visible again.
+
+### Changed
+- Chat tile CSS made more robust against containers that don't impose
+  a height: `min-height: 480px`, `max-height: 80vh`, history pane
+  `min-height: 320px` and `flex: 1 1 auto`. The full chat now fits
+  inside an appropriately sized tile (configure as Large in the Tile
+  Editor) so the expand action is not needed.
+
 ## [0.2.3] - 2026-05-16
 
 ### Fixed
