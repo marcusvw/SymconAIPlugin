@@ -10,6 +10,11 @@ class AISymconChat extends IPSModule
     {
         parent::Create();
 
+        // Register module as HTML-tile (Symcon HTML-SDK, requires Symcon >= 7.1).
+        if (method_exists($this, 'SetVisualizationType')) {
+            $this->SetVisualizationType(1);
+        }
+
         $this->RegisterPropertyString('Provider', 'lmstudio');
         $this->RegisterPropertyString('Endpoint', 'http://localhost:1234/v1');
         $this->RegisterPropertyString('ApiKey', '');
@@ -74,12 +79,14 @@ class AISymconChat extends IPSModule
             return '';
         }
         SetValue($this->GetIDForIdent('Busy'), true);
+        $this->pushTileState();
         try {
             $reply = $this->runTurn($prompt);
             SetValue($this->GetIDForIdent('LastResponse'), $reply);
             return $reply;
         } finally {
             SetValue($this->GetIDForIdent('Busy'), false);
+            $this->pushTileState();
         }
     }
 
@@ -87,6 +94,29 @@ class AISymconChat extends IPSModule
     {
         SetValue($this->GetIDForIdent('History'), '[]');
         SetValue($this->GetIDForIdent('LastResponse'), '');
+        $this->pushTileState();
+    }
+
+    /**
+     * Push current state to any open visualization tiles via the Symcon
+     * HTML-SDK. Tiles receive the JSON in their handleMessage(value) callback.
+     */
+    private function pushTileState(): void
+    {
+        if (!method_exists($this, 'UpdateVisualizationValue')) {
+            return;
+        }
+        $historyJson = (string) GetValue($this->GetIDForIdent('History'));
+        if ($historyJson === '' || json_decode($historyJson, true) === null) {
+            $historyJson = '[]';
+        }
+        $payload = json_encode([
+            'history' => json_decode($historyJson, true),
+            'busy'    => (bool) GetValue($this->GetIDForIdent('Busy')),
+        ], JSON_UNESCAPED_UNICODE);
+        if ($payload !== false) {
+            $this->UpdateVisualizationValue($payload);
+        }
     }
 
     public function RebuildIndex(): int

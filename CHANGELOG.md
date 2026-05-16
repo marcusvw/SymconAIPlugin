@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-05-16
+
+### Fixed
+- Chat tile was not appearing — Symcon's HTML-SDK (≥ 7.1) requires the
+  module to call `SetVisualizationType(1)` in `Create()` to register as
+  a custom-HTML instance. Without it Symcon falls back to the default
+  variable list.
+- `handleMessage(value)` in the tile JS now expects a single JSON-string
+  argument (the actual HTML-SDK shape), not a `{SenderID, Data}` event
+  object.
+- `AISymconChat` now pushes its state to open tiles via
+  `UpdateVisualizationValue()` after every send / reset / busy
+  transition so the bubbles update live.
+
 ## [0.2.1] - 2026-05-16
 
 ### Fixed

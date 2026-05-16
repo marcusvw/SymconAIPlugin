@@ -237,21 +237,16 @@
     $tools.addEventListener('change', render);
 
     /**
-     * Symcon calls handleMessage when a subscribed variable changes.
-     * The exact payload shape differs between Tile editor and classic
-     * WebFront; we handle both.
+     * Symcon HTML-SDK: handleMessage is called with the value that PHP
+     * passed to UpdateVisualizationValue(). We push a JSON string
+     * { history: [...], busy: bool } so the tile can re-render fully.
      */
-    window.handleMessage = function (message) {
+    window.handleMessage = function (value) {
         try {
-            var senderID = message && (message.SenderID || message.senderID || message.target);
-            var data     = message && (message.Data || message.data);
-            var value    = Array.isArray(data) ? data[0] : data;
-
-            if (senderID === HISTORY_VAR && typeof value === 'string') {
-                history = JSON.parse(value);
-            } else if (senderID === BUSY_VAR) {
-                busy = !!value;
-            }
+            if (typeof value !== 'string' || value === '') return;
+            var state = JSON.parse(value);
+            if (Array.isArray(state.history)) history = state.history;
+            if (typeof state.busy === 'boolean') busy = state.busy;
             render();
         } catch (e) {
             console.error('[aichat] handleMessage error', e);
