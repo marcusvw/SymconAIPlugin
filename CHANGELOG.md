@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-05-16
+
+### Fixed
+- `module.json` `type` changed from `0` (Core) to `3` (Device) on both
+  `AISymconChat` and `AISymconAgent` so the instances show up in the
+  Tile Editor's picker and in the standard "add instance" dialog.
+
 ## [0.2.0] - 2026-05-16
 
 ### Added
