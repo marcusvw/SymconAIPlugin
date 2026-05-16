@@ -4,8 +4,8 @@
     "name": "AISymcon",
     "url": "https://github.com/marcusvw/SymconAIPlugin",
     "description": "Provider-agnostic LLM integration for IP-Symcon: chat-control and script-driven agent calls over the Symcon object tree.",
-    "version": "0.3.0",
-    "build": 7,
+    "version": "0.3.1",
+    "build": 8,
     "date": 1763251200,
     "compatibility": {
         "version": "6.0"

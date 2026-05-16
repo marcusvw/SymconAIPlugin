@@ -7,7 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.3.0] - 2026-05-16
+## [0.3.1] - 2026-05-16
+
+### Changed
+- System prompts (DE + EN) rewritten with strict rules to avoid two
+  common failure modes observed in production:
+  1. **Wrong action ident**: the model would call `request_action` with
+     guessed idents like `On` for brightness. New rule: if
+     `get_variable` shows `has_action: true`, `set_variable(id, value)`
+     is mandatory.
+  2. **Missing scaling**: profiles with `suffix="%"` but `max != 100`
+     (e.g. Hue `HUE.Intensity` with `max=254`) need
+     `round(percent/100 * max)`, not the literal percent.
+  Also: clearer dry-run guidance so the model reports the dry-run
+  status to the user instead of retrying.
+- Tool descriptions for `set_variable` and `request_action` reinforce
+  the same rules, including a worked Hue/dimmer example in the
+  `set_variable` JSON schema.
+
+
 
 ### Added
 - `SendDebug` instrumentation at every agent interaction. Visible in

@@ -21,11 +21,11 @@ class VariableTools
         ));
 
         $kit->register(new ToolDef(
-            new LLMToolSpec('set_variable', 'Write a Symcon variable. Uses RequestAction when an action is associated, else SetValue. Profile-based type coercion.', [
+            new LLMToolSpec('set_variable', 'Preferred write op for any variable with has_action=true. Uses RequestAction when an action is associated, else SetValue. Performs profile-based type coercion and range checks.', [
                 'type' => 'object',
                 'properties' => [
                     'id' => ['type' => 'integer'],
-                    'value' => ['description' => 'Boolean, number, or string compatible with the variable profile.'],
+                    'value' => ['description' => 'Value compatible with the variable type AND profile range. For % profiles whose max is not 100, the value must be the raw scaled value (e.g. 40% of max=254 → 102), not the percentage literal.'],
                 ],
                 'required' => ['id', 'value'],
                 'additionalProperties' => true,
