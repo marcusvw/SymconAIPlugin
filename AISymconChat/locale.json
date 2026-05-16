@@ -1,0 +1,41 @@
+{
+    "translations": {
+        "de": {
+            "LLM Provider": "LLM-Anbieter",
+            "Provider": "Anbieter",
+            "Endpoint (LM Studio / OpenAI-compatible)": "Endpunkt (LM Studio / OpenAI-kompatibel)",
+            "API Key": "API-Schlüssel",
+            "Model (must support native tool calling)": "Modell (muss natives Tool Calling unterstützen)",
+            "Temperature": "Temperatur",
+            "Max tokens": "Max. Tokens",
+            "Chat Behavior": "Chat-Verhalten",
+            "Language": "Sprache",
+            "Actor name (for audit)": "Actor-Name (für Audit)",
+            "Scope": "Scope",
+            "System prompt (override)": "System-Prompt (Override)",
+            "Allowed root IDs (JSON array)": "Erlaubte Wurzel-IDs (JSON-Array)",
+            "History limit (messages)": "History-Limit (Nachrichten)",
+            "Embeddings": "Embeddings",
+            "Embedding model": "Embedding-Modell",
+            "Rebuild index": "Index neu aufbauen",
+            "Budgets": "Budgets",
+            "Max tool calls per turn": "Max. Tool-Aufrufe pro Turn",
+            "Max LLM iterations": "Max. LLM-Iterationen",
+            "Timeout per LLM call (s)": "Timeout pro LLM-Aufruf (s)",
+            "Safety & Audit": "Sicherheit & Audit",
+            "Dry-run": "Dry-Run",
+            "Expose redacted instance secrets (scope=full only)": "Redigierte Instanz-Geheimnisse offenlegen (nur scope=full)",
+            "Audit verbosity": "Audit-Detailtiefe",
+            "Minimal": "Minimal",
+            "Normal": "Normal",
+            "Verbose": "Ausführlich",
+            "Audit log file": "Audit-Logdatei",
+            "Test connection": "Verbindung testen",
+            "Reset history": "Verlauf zurücksetzen",
+            "Prompt": "Eingabe",
+            "Last response": "Letzte Antwort",
+            "Busy": "Beschäftigt",
+            "History (JSON)": "Verlauf (JSON)"
+        }
+    }
+}

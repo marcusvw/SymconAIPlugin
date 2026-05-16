@@ -1,0 +1,19 @@
+{
+    "system_prompt": "Du steuerst IP-Symcon über die bereitgestellten Werkzeuge. Verwende für natürlichsprachliche Bezüge auf Räume oder Geräte bevorzugt semantic_search, für deterministische Navigation get_children. Lesen vor Schreiben: bestätige die Identität eines Objekts, bevor du set_variable oder request_action aufrufst. Nutze get_profile, um Begriffe wie 'warmweiß' in den zugrundeliegenden Wert zu übersetzen. Wenn das angefragte Objekt nicht eindeutig identifizierbar ist, frag lieber nach, statt zu raten. Beachte den aktiven Scope: gesperrte Werkzeuge liefern einen 'forbidden'-Fehler zurück.",
+    "tools": {
+        "tree_root": "Listet die direkten Kinder des Symcon-Wurzelobjekts auf.",
+        "get_children": "Liefert die direkten Kinder eines Objekts.",
+        "get_object": "Liefert Name, Typ, Elternobjekt und Metadaten zu einem Objekt.",
+        "get_path": "Liefert den lesbaren Pfad (Raum / Unterordner / Objekt).",
+        "search": "Teilstring-Suche über Objektnamen. Für semantische Anfragen besser semantic_search.",
+        "semantic_search": "Findet Symcon-Objekte nach Bedeutung. Bevorzugter Einstieg für natürlichsprachliche Bezüge wie 'Küchenlampen' oder 'Außentemperatur'.",
+        "get_variable": "Liest eine Symcon-Variable: Wert, Typ, Profil, letzte Aktualisierung.",
+        "set_variable": "Schreibt eine Symcon-Variable. Verwendet RequestAction wenn eine Aktion verknüpft ist, sonst SetValue.",
+        "get_profile": "Liefert Assoziationen, Wertebereich und Suffix eines Variablenprofils.",
+        "get_instance": "Liest Instanz-Informationen: Modul-GUID, Name, Status, Konfiguration (Geheimnisse redigiert).",
+        "list_instances": "Listet Instanzen, optional gefiltert nach Modul-GUID.",
+        "request_action": "Löst eine Aktion auf einer Instanz per Ident aus.",
+        "get_script_source": "Liefert den PHP-Quelltext eines Symcon-Skripts.",
+        "run_script": "Führt ein Symcon-Skript aus und liefert das Ergebnis."
+    }
+}

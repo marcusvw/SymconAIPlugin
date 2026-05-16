@@ -1,0 +1,12 @@
+{
+    "id": "{A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C5D}",
+    "name": "AISymconChat",
+    "type": 0,
+    "vendor": "wilamowitz",
+    "url": "https://github.com/wilamowitz/AISymconPlugin",
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "AICHAT",
+    "aliases": ["AI Chat"]
+}

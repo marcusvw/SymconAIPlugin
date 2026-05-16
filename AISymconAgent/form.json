@@ -1,0 +1,93 @@
+{
+    "elements": [
+        {
+            "type": "ExpansionPanel",
+            "caption": "LLM Provider",
+            "expanded": true,
+            "items": [
+                {
+                    "type": "Select",
+                    "name": "Provider",
+                    "caption": "Provider",
+                    "options": [
+                        {"caption": "LM Studio (local, OpenAI-compatible)", "value": "lmstudio"},
+                        {"caption": "Anthropic Claude API", "value": "claude"}
+                    ]
+                },
+                {"type": "ValidationTextBox", "name": "Endpoint", "caption": "Endpoint (LM Studio / OpenAI-compatible)"},
+                {"type": "PasswordTextBox", "name": "ApiKey", "caption": "API Key"},
+                {"type": "ValidationTextBox", "name": "Model", "caption": "Model (must support native tool calling)"},
+                {"type": "NumberSpinner", "name": "Temperature", "caption": "Temperature", "digits": 2, "minimum": 0, "maximum": 2},
+                {"type": "NumberSpinner", "name": "MaxTokens", "caption": "Max tokens", "minimum": 64, "maximum": 65536}
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Agent Behavior",
+            "items": [
+                {
+                    "type": "Select",
+                    "name": "Language",
+                    "caption": "Language (system prompt + tool descriptions)",
+                    "options": [
+                        {"caption": "Deutsch", "value": "de"},
+                        {"caption": "English", "value": "en"}
+                    ]
+                },
+                {"type": "ValidationTextBox", "name": "Actor", "caption": "Actor name (for audit)"},
+                {
+                    "type": "Select",
+                    "name": "Scope",
+                    "caption": "Scope",
+                    "options": [
+                        {"caption": "read_only — read tree + values", "value": "read_only"},
+                        {"caption": "control — read + set variables / call actions", "value": "control"},
+                        {"caption": "automation — control + run scripts", "value": "automation"},
+                        {"caption": "full — automation + create/edit objects", "value": "full"}
+                    ]
+                },
+                {"type": "ValidationTextBox", "multiline": true, "name": "SystemPromptOverride", "caption": "System prompt (override; blank = locale default)"},
+                {"type": "ValidationTextBox", "name": "AllowedRoots", "caption": "Allowed root IDs (JSON array, empty = whole tree)"}
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Embeddings (semantic_search)",
+            "items": [
+                {"type": "ValidationTextBox", "name": "EmbedModel", "caption": "Embedding model"},
+                {"type": "Button", "caption": "Rebuild index", "onClick": "echo AISYMCON_RebuildIndex($id);"}
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Budgets",
+            "items": [
+                {"type": "NumberSpinner", "name": "MaxToolCalls", "caption": "Max tool calls per request", "minimum": 1, "maximum": 200},
+                {"type": "NumberSpinner", "name": "MaxIterations", "caption": "Max LLM iterations (0 = max_tool_calls + 2)", "minimum": 0, "maximum": 200},
+                {"type": "NumberSpinner", "name": "TimeoutSec", "caption": "Timeout per LLM call (seconds)", "minimum": 5, "maximum": 600}
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Safety & Audit",
+            "items": [
+                {"type": "CheckBox", "name": "DryRun", "caption": "Dry-run (write tools return what would happen, do not modify state)"},
+                {"type": "CheckBox", "name": "ExposeSecrets", "caption": "Expose redacted instance secrets (requires scope=full)"},
+                {
+                    "type": "Select",
+                    "name": "AuditVerbosity",
+                    "caption": "Audit verbosity",
+                    "options": [
+                        {"caption": "Minimal (tool name + arg keys)", "value": "minimal"},
+                        {"caption": "Normal (args + summary)", "value": "normal"},
+                        {"caption": "Verbose (full args + full result)", "value": "verbose"}
+                    ]
+                },
+                {"type": "ValidationTextBox", "name": "AuditLogFile", "caption": "Audit log file path (blank = Symcon log only)"}
+            ]
+        }
+    ],
+    "actions": [
+        {"type": "Button", "caption": "Test connection", "onClick": "echo AISYMCON_TestConnection($id);"}
+    ]
+}

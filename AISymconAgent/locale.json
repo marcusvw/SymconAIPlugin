@@ -1,0 +1,32 @@
+{
+    "translations": {
+        "de": {
+            "LLM Provider": "LLM-Anbieter",
+            "Provider": "Anbieter",
+            "Endpoint (LM Studio / OpenAI-compatible)": "Endpunkt (LM Studio / OpenAI-kompatibel)",
+            "API Key": "API-Schlüssel",
+            "Model (must support native tool calling)": "Modell (muss natives Tool Calling unterstützen)",
+            "Temperature": "Temperatur",
+            "Max tokens": "Max. Tokens",
+            "Agent Behavior": "Agent-Verhalten",
+            "Language (system prompt + tool descriptions)": "Sprache (System-Prompt + Tool-Beschreibungen)",
+            "Actor name (for audit)": "Actor-Name (für Audit)",
+            "Scope": "Scope",
+            "System prompt (override; blank = locale default)": "System-Prompt (Override; leer = Sprach-Default)",
+            "Allowed root IDs (JSON array, empty = whole tree)": "Erlaubte Wurzel-IDs (JSON-Array, leer = ganzer Baum)",
+            "Embeddings (semantic_search)": "Embeddings (semantic_search)",
+            "Embedding model": "Embedding-Modell",
+            "Rebuild index": "Index neu aufbauen",
+            "Budgets": "Budgets",
+            "Max tool calls per request": "Max. Tool-Aufrufe pro Anfrage",
+            "Max LLM iterations (0 = max_tool_calls + 2)": "Max. LLM-Iterationen (0 = max_tool_calls + 2)",
+            "Timeout per LLM call (seconds)": "Timeout pro LLM-Aufruf (Sekunden)",
+            "Safety & Audit": "Sicherheit & Audit",
+            "Dry-run (write tools return what would happen, do not modify state)": "Dry-Run (schreibende Tools liefern Vorschau, ändern nichts)",
+            "Expose redacted instance secrets (requires scope=full)": "Redigierte Instanz-Geheimnisse offenlegen (erfordert scope=full)",
+            "Audit verbosity": "Audit-Detailtiefe",
+            "Audit log file path (blank = Symcon log only)": "Audit-Logdatei-Pfad (leer = nur Symcon-Log)",
+            "Test connection": "Verbindung testen"
+        }
+    }
+}

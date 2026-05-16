@@ -1,0 +1,13 @@
+{
+    "id": "{C0DE0001-AAAA-4BBB-8CCC-0DDDDEEEFFFF}",
+    "author": "Marcus Graf von Wilamowitz",
+    "name": "AISymcon",
+    "url": "https://github.com/wilamowitz/AISymconPlugin",
+    "description": "Provider-agnostic LLM integration for IP-Symcon: chat-control and script-driven agent calls over the Symcon object tree.",
+    "version": "0.1.0",
+    "build": 1,
+    "date": 1763251200,
+    "compatibility": {
+        "version": "6.0"
+    }
+}
