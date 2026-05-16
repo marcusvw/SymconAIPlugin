@@ -1,0 +1,263 @@
+<style>
+    .aichat {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 420px;
+        font-family: var(--font-family, sans-serif);
+        color: var(--text-color, #fff);
+    }
+
+    .aichat__toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 10px;
+        border-bottom: 1px solid var(--border-color, #333);
+        font-size: 0.85em;
+        color: var(--text-color-secondary, #888);
+    }
+
+    .aichat__toolbar label { user-select: none; cursor: pointer; }
+
+    .aichat__toolbar button {
+        background: transparent;
+        color: var(--text-color-secondary, #888);
+        border: 1px solid var(--border-color, #333);
+        padding: 4px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .aichat__history {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .aichat__bubble {
+        padding: 8px 12px;
+        border-radius: 12px;
+        max-width: 85%;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        line-height: 1.35;
+    }
+
+    .aichat__bubble--user {
+        align-self: flex-end;
+        background: var(--accent-color, #1976d2);
+        color: #fff;
+        border-bottom-right-radius: 4px;
+    }
+
+    .aichat__bubble--assistant {
+        align-self: flex-start;
+        background: var(--background-color-secondary, #2a2a2a);
+        border-bottom-left-radius: 4px;
+    }
+
+    .aichat__bubble--tool {
+        align-self: flex-start;
+        max-width: 95%;
+        background: transparent;
+        color: var(--text-color-secondary, #888);
+        font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        font-size: 0.8em;
+        border-left: 2px solid var(--border-color, #444);
+        padding: 4px 8px;
+        border-radius: 0 8px 8px 0;
+    }
+
+    .aichat__busy {
+        align-self: flex-start;
+        font-style: italic;
+        color: var(--text-color-secondary, #888);
+        padding: 4px 8px;
+    }
+
+    .aichat__busy::after {
+        content: '…';
+        display: inline-block;
+        animation: aichat-pulse 1.2s infinite;
+    }
+
+    @keyframes aichat-pulse {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
+    }
+
+    .aichat__input {
+        display: flex;
+        gap: 8px;
+        padding: 10px;
+        border-top: 1px solid var(--border-color, #333);
+    }
+
+    .aichat__input input {
+        flex: 1;
+        padding: 8px 10px;
+        border-radius: 4px;
+        border: 1px solid var(--border-color, #444);
+        background: var(--background-color, #1e1e1e);
+        color: var(--text-color, #fff);
+        font-size: 0.95em;
+    }
+
+    .aichat__input button {
+        padding: 8px 16px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        background: var(--accent-color, #1976d2);
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .aichat__input button:disabled,
+    .aichat__input input:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+</style>
+
+<div class="aichat" id="aichat-root">
+    <div class="aichat__toolbar">
+        <label><input type="checkbox" id="aichat-showtools"> show tool calls</label>
+        <button id="aichat-reset" title="Clear conversation history">Reset</button>
+    </div>
+    <div class="aichat__history" id="aichat-history"></div>
+    <div class="aichat__input">
+        <input type="text" id="aichat-input" placeholder="%PLACEHOLDER%" autocomplete="off" />
+        <button id="aichat-send">%SEND_LABEL%</button>
+    </div>
+</div>
+
+<script>
+(function () {
+    var INSTANCE_ID = %INSTANCE_ID%;
+    var HISTORY_VAR = %HISTORY_VAR%;
+    var BUSY_VAR    = %BUSY_VAR%;
+    var LAST_VAR    = %LAST_VAR%;
+    var INPUT_VAR   = %INPUT_VAR%;
+
+    var history = %HISTORY_JSON%;
+    var busy    = %BUSY_JSON%;
+
+    var $hist  = document.getElementById('aichat-history');
+    var $input = document.getElementById('aichat-input');
+    var $send  = document.getElementById('aichat-send');
+    var $reset = document.getElementById('aichat-reset');
+    var $tools = document.getElementById('aichat-showtools');
+
+    function render() {
+        $hist.innerHTML = '';
+        var showTools = $tools.checked;
+        for (var i = 0; i < history.length; i++) {
+            var m = history[i];
+            if (m.role === 'system') continue;
+            var hasToolCalls = m.toolCalls && m.toolCalls.length > 0;
+            if (m.role === 'tool' && !showTools) continue;
+            if (m.role === 'assistant' && !m.content && hasToolCalls && !showTools) continue;
+
+            var div = document.createElement('div');
+            var cls = 'aichat__bubble--assistant';
+            if (m.role === 'user')      cls = 'aichat__bubble--user';
+            else if (m.role === 'tool') cls = 'aichat__bubble--tool';
+            div.className = 'aichat__bubble ' + cls;
+
+            var text = m.content || '';
+            if (m.role === 'tool') {
+                text = '← ' + (m.toolName || 'tool') + '\n' + truncate(text, 600);
+            }
+            if (m.role === 'assistant' && hasToolCalls && showTools) {
+                for (var j = 0; j < m.toolCalls.length; j++) {
+                    var c = m.toolCalls[j];
+                    text += (text ? '\n' : '') + '→ ' + c.name + '(' + JSON.stringify(c.arguments) + ')';
+                }
+            }
+            div.textContent = text;
+            $hist.appendChild(div);
+        }
+        if (busy) {
+            var b = document.createElement('div');
+            b.className = 'aichat__busy';
+            b.textContent = 'thinking';
+            $hist.appendChild(b);
+        }
+        $hist.scrollTop = $hist.scrollHeight;
+        $send.disabled = !!busy;
+        $input.disabled = !!busy;
+    }
+
+    function truncate(s, n) {
+        if (!s) return '';
+        return s.length > n ? (s.substring(0, n) + '… [+' + (s.length - n) + ' chars]') : s;
+    }
+
+    function send() {
+        var v = ($input.value || '').trim();
+        if (!v || busy) return;
+        $input.value = '';
+        callAction('InputPrompt', v);
+    }
+
+    /**
+     * Trigger an action on the module. Symcon Tile/WebFront exposes
+     * `requestAction` and/or `IPS.RequestAction` depending on version.
+     */
+    function callAction(ident, value) {
+        try {
+            if (typeof requestAction === 'function') {
+                requestAction(ident, value);
+                return;
+            }
+            if (typeof IPS !== 'undefined' && IPS && typeof IPS.RequestAction === 'function') {
+                IPS.RequestAction(INSTANCE_ID, ident, value);
+                return;
+            }
+            if (typeof handleEvent === 'function') {
+                handleEvent('requestAction', INSTANCE_ID, ident, value);
+                return;
+            }
+            console.warn('[aichat] Symcon JS bridge not available');
+        } catch (e) {
+            console.error('[aichat] requestAction failed', e);
+        }
+    }
+
+    $send.addEventListener('click', send);
+    $input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') send();
+    });
+    $reset.addEventListener('click', function () { callAction('Reset', ''); });
+    $tools.addEventListener('change', render);
+
+    /**
+     * Symcon calls handleMessage when a subscribed variable changes.
+     * The exact payload shape differs between Tile editor and classic
+     * WebFront; we handle both.
+     */
+    window.handleMessage = function (message) {
+        try {
+            var senderID = message && (message.SenderID || message.senderID || message.target);
+            var data     = message && (message.Data || message.data);
+            var value    = Array.isArray(data) ? data[0] : data;
+
+            if (senderID === HISTORY_VAR && typeof value === 'string') {
+                history = JSON.parse(value);
+            } else if (senderID === BUSY_VAR) {
+                busy = !!value;
+            }
+            render();
+        } catch (e) {
+            console.error('[aichat] handleMessage error', e);
+        }
+    };
+
+    render();
+})();
+</script>

@@ -99,6 +99,47 @@ class AISymconChat extends IPSModule
         return $index->rebuild();
     }
 
+    /**
+     * Render the chat tile. Symcon calls this for instances that expose
+     * a visualization; the returned HTML is injected into the Tile/WebFront.
+     */
+    public function GetVisualizationTile(): string
+    {
+        $template = @file_get_contents(__DIR__ . '/module.html');
+        if ($template === false) {
+            return '<div style="padding:12px;color:#f55">AISymconChat: module.html not found.</div>';
+        }
+
+        $historyID = $this->GetIDForIdent('History');
+        $busyID    = $this->GetIDForIdent('Busy');
+        $lastID    = $this->GetIDForIdent('LastResponse');
+        $inputID   = $this->GetIDForIdent('InputPrompt');
+
+        $historyJson = (string) GetValue($historyID);
+        if ($historyJson === '' || json_decode($historyJson, true) === null) {
+            $historyJson = '[]';
+        }
+        $busyJson = GetValue($busyID) ? 'true' : 'false';
+
+        $placeholder = $this->ReadPropertyString('Language') === 'en'
+            ? 'Type a message…'
+            : 'Nachricht eingeben…';
+        $sendLabel = $this->ReadPropertyString('Language') === 'en' ? 'Send' : 'Senden';
+
+        $replacements = [
+            '%INSTANCE_ID%'  => (string) $this->InstanceID,
+            '%HISTORY_VAR%'  => (string) $historyID,
+            '%BUSY_VAR%'     => (string) $busyID,
+            '%LAST_VAR%'     => (string) $lastID,
+            '%INPUT_VAR%'    => (string) $inputID,
+            '%HISTORY_JSON%' => $historyJson,
+            '%BUSY_JSON%'    => $busyJson,
+            '%PLACEHOLDER%'  => htmlspecialchars($placeholder, ENT_QUOTES, 'UTF-8'),
+            '%SEND_LABEL%'   => htmlspecialchars($sendLabel, ENT_QUOTES, 'UTF-8'),
+        ];
+        return strtr($template, $replacements);
+    }
+
     public function TestConnection(): string
     {
         try {
