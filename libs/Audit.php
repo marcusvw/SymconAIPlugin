@@ -12,13 +12,31 @@ class Audit
     private string $actor;
     private ?string $logFile;
     private string $verbosity;
+    /** @var (callable(string,string):void)|null */
+    private $debugFn;
 
-    public function __construct(int $instanceID, string $actor, ?string $logFile = null, string $verbosity = 'normal')
+    public function __construct(int $instanceID, string $actor, ?string $logFile = null, string $verbosity = 'normal', ?callable $debugFn = null)
     {
         $this->instanceID = $instanceID;
         $this->actor = $actor !== '' ? $actor : ('instance:' . $instanceID);
         $this->logFile = $logFile;
         $this->verbosity = $verbosity;
+        $this->debugFn = $debugFn;
+    }
+
+    /**
+     * Emit a free-form debug line. Routed to the module's SendDebug()
+     * (visible in the instance's Debug tab) and to the Symcon log.
+     */
+    public function debug(string $sender, string $message): void
+    {
+        if ($this->debugFn !== null) {
+            try {
+                ($this->debugFn)($sender, $message);
+            } catch (\Throwable $e) {
+                // never let debug logging break the agent
+            }
+        }
     }
 
     public function record(string $tool, array $args, string $result, bool $dryRun, string $scope, string $caller): void
@@ -44,6 +62,8 @@ class Audit
         if ($this->logFile !== null && $this->logFile !== '') {
             $this->appendToFile($line);
         }
+        // Mirror to instance debug tab.
+        $this->debug('tool:' . $tool, $line);
     }
 
     private function sanitizeArgs(array $args): array

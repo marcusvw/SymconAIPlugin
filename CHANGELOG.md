@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-05-16
+
+### Added
+- `SendDebug` instrumentation at every agent interaction. Visible in
+  the instance's **Debug** tab in the Management Console:
+  - `chat.send` / `chat.reply` / `chat.reset` / `action` on AISymconChat
+  - `agent.ask` / `agent.result` on AISymconAgent
+  - `agent.start` / `llm.request` / `llm.response` / `llm.error` /
+    `agent.done` on every LLM round-trip (from AgentRuntime)
+  - `tool:<name>` mirrors every tool invocation with full audit JSON
+- `Audit` constructor accepts an optional debug callable; tool
+  records and free-form `Audit::debug()` calls are mirrored to it.
+
 ## [0.2.4] - 2026-05-16
 
 ### Reverted

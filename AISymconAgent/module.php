@@ -114,12 +114,17 @@ class AISymconAgent extends IPSModule
         $index = Bootstrap::buildIndex($provider, $this->dataDir(), $this->ReadPropertyString('EmbedModel'));
 
         $caller = isset($_IPS['SELF']) ? 'script:' . (int) $_IPS['SELF'] : 'internal';
+        $debugFn = function (string $sender, string $message): void {
+            $this->SendDebug($sender, $message, 0);
+        };
         $audit = new Audit(
             $this->InstanceID,
             $this->ReadPropertyString('Actor') ?: IPS_GetName($this->InstanceID),
             $this->ReadPropertyString('AuditLogFile') ?: null,
-            $this->ReadPropertyString('AuditVerbosity')
+            $this->ReadPropertyString('AuditVerbosity'),
+            $debugFn
         );
+        $this->SendDebug('agent.ask', sprintf('caller=%s prompt=%s', $caller, $this->trimDebug($prompt)), 0);
         $allowedRoots = json_decode($this->ReadPropertyString('AllowedRoots'), true) ?: [];
         $ctx = new ToolContext(
             $this->ReadPropertyString('Scope'),
@@ -146,7 +151,19 @@ class AISymconAgent extends IPSModule
         $runtime = new AgentRuntime($provider, $kit, $ctx, $system, $opts);
         $history = [new LLMMessage(LLMMessage::ROLE_USER, $prompt)];
         $out = $runtime->run($history, $budget);
+        $this->SendDebug('agent.result', sprintf(
+            'tool_calls=%d iterations=%d budget_exceeded=%s reply=%s',
+            $out['result']->toolCalls,
+            $out['result']->iterations,
+            $out['result']->budgetExceeded ? 'yes' : 'no',
+            $this->trimDebug($out['result']->text)
+        ), 0);
         return $out['result']->toArray();
+    }
+
+    private function trimDebug(string $s): string
+    {
+        return strlen($s) > 500 ? (substr($s, 0, 500) . '… [+' . (strlen($s) - 500) . ']') : $s;
     }
 
     private function providerConfig(): array

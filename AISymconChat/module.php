@@ -61,6 +61,7 @@ class AISymconChat extends IPSModule
 
     public function RequestAction($Ident, $Value)
     {
+        $this->SendDebug('action', sprintf('ident=%s value=%s', $Ident, is_scalar($Value) ? (string) $Value : json_encode($Value)), 0);
         if ($Ident === 'InputPrompt') {
             SetValue($this->GetIDForIdent('InputPrompt'), $Value);
             $this->Send((string) $Value);
@@ -98,6 +99,7 @@ class AISymconChat extends IPSModule
     {
         SetValue($this->GetIDForIdent('History'), '[]');
         SetValue($this->GetIDForIdent('LastResponse'), '');
+        $this->SendDebug('chat.reset', 'history cleared', 0);
         $this->pushTileState();
     }
 
@@ -200,12 +202,17 @@ class AISymconChat extends IPSModule
         $index = Bootstrap::buildIndex($provider, $this->dataDir(), $this->ReadPropertyString('EmbedModel'));
 
         $caller = 'chat:' . $this->InstanceID;
+        $debugFn = function (string $sender, string $message): void {
+            $this->SendDebug($sender, $message, 0);
+        };
         $audit = new Audit(
             $this->InstanceID,
             $this->ReadPropertyString('Actor') ?: IPS_GetName($this->InstanceID),
             $this->ReadPropertyString('AuditLogFile') ?: null,
-            $this->ReadPropertyString('AuditVerbosity')
+            $this->ReadPropertyString('AuditVerbosity'),
+            $debugFn
         );
+        $this->SendDebug('chat.send', sprintf('prompt=%s', $this->trimDebug($prompt)), 0);
         $allowedRoots = json_decode($this->ReadPropertyString('AllowedRoots'), true) ?: [];
         $ctx = new ToolContext(
             $this->ReadPropertyString('Scope'),
@@ -233,7 +240,13 @@ class AISymconChat extends IPSModule
         $runtime = new AgentRuntime($provider, $kit, $ctx, $system, $opts);
         $out = $runtime->run($history, $budget);
         $this->saveHistory($out['messages']);
+        $this->SendDebug('chat.reply', sprintf('reply=%s', $this->trimDebug($out['result']->text)), 0);
         return $out['result']->text;
+    }
+
+    private function trimDebug(string $s): string
+    {
+        return strlen($s) > 500 ? (substr($s, 0, 500) . '… [+' . (strlen($s) - 500) . ']') : $s;
     }
 
     /** @return LLMMessage[] */

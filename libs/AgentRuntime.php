@@ -84,18 +84,39 @@ class AgentRuntime
         $opts = array_merge($this->chatOpts, ['system' => $this->systemPrompt, 'timeout' => $budget->timeoutSec]);
         $deadline = microtime(true) + $budget->timeoutSec * max(1, ($budget->maxIterations));
 
+        $audit = $this->ctx->audit;
+        $audit->debug('agent.start', sprintf(
+            'provider=%s model=%s scope=%s tools=%d budget=%d/%d/%ds',
+            $this->provider->getName(),
+            (string) ($opts['model'] ?? ''),
+            $this->ctx->scope,
+            count($specs),
+            $budget->maxToolCalls,
+            $budget->maxIterations,
+            $budget->timeoutSec
+        ));
+
         for ($i = 0; $i < $budget->maxIterations; $i++) {
             $result->iterations++;
 
+            $audit->debug('llm.request', sprintf('iter=%d messages=%d tools=%d', $i + 1, count($messages), count($specs)));
             try {
                 $resp = $this->provider->chat($messages, $specs, $opts);
             } catch (LLMException $e) {
                 $result->error = '[' . $e->kind . '] ' . $e->getMessage();
+                $audit->debug('llm.error', $result->error);
                 return ['messages' => $messages, 'result' => $result];
             }
             if (!empty($resp->usage)) {
                 $result->usage = $resp->usage;
             }
+            $audit->debug('llm.response', sprintf(
+                'finish=%s text=%d chars tool_calls=%d usage=%s',
+                $resp->finishReason,
+                strlen($resp->text),
+                count($resp->toolCalls),
+                json_encode($resp->usage, JSON_UNESCAPED_SLASHES)
+            ));
 
             // Append assistant turn.
             $assistantMsg = new LLMMessage(LLMMessage::ROLE_ASSISTANT, $resp->text, $resp->toolCalls);
@@ -103,6 +124,7 @@ class AgentRuntime
 
             if (!$resp->hasToolCalls()) {
                 $result->text = $resp->text;
+                $audit->debug('agent.done', sprintf('iters=%d tool_calls=%d chars=%d', $result->iterations, $result->toolCalls, strlen($result->text)));
                 return ['messages' => $messages, 'result' => $result];
             }
 
